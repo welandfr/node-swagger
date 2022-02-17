@@ -1,9 +1,10 @@
 const express = require('express')
 const router = express.Router()
 
+// Simulerad datamodell
 const notes = [
-    { text: "Köp gräddfil" }, 
-    { text: "Gym i dag" }    
+    { text: "Köp gräddfil", category: 2 }, 
+    { text: "Gym i dag", category: 4 }    
 ]
 
 // Middleware
@@ -12,12 +13,58 @@ const logMethod = (req, res, next) => {
     next()
 }
 
-//router.use(logMethod)
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      Note:
+ *          type: object
+ *          properties:
+ *              text:
+ *                  type: string
+ *                  description: The note text
+ *                  example: Be nice!
+ *              category:
+ *                  type: integer
+ *                  description: Note category
+ *                  example: 1
+ */
 
+
+/**
+ * @swagger
+ * /notes:
+ *  get:
+ *      description: List all notes
+ *      responses:
+ *          200:
+ *              description: OK
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                      $ref: '#/components/schemas/Note'
+ * 
+ */
 router.get('/', (req, res) => {
     res.send(notes)
 })
 
+/** Vår POST-endpoint
+ * 
+ * @swagger
+ * /notes:
+ *  post:
+ *      description: Add new note
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/Note'
+ *      responses:
+ *          200:
+ *              description: Note created successfully.
+ * 
+ */
 router.post('/', logMethod, (req, res) => {
     notes.push(req.body)
     res.status(201).json({message: "Note created!"})
